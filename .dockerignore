@@ -20,5 +20,4 @@ Documents/
 PdfToTxt.py
 frontend/assets
 
-data/raw_docs
 utils/logger.py
