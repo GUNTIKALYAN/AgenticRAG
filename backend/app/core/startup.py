@@ -25,8 +25,8 @@ async def lifespan(app: FastAPI):
     # Cache
     state.cache = init_cache()
 
-    # Reranker (safe load)
-    state.reranker = RerankService()
+    # Reranker 
+    state.reranker = None
 
     print(f"Cache initialized: {state.cache is not None}")
     print(f"Reranker loaded: {state.reranker is not None}")

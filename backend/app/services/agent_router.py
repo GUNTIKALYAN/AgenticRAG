@@ -56,9 +56,12 @@ class AgentRouter:
                 "sources": [],
             }
         print("Retrieved docs:",retrieved_docs)
-
+        print("Using reranker:",bool(self.reranker))
         # 5. Rerank
-        top_docs = self.reranker.rerank(expanded_query, retrieved_docs)
+        if self.reranker:
+            top_docs = self.reranker.rerank(expanded_query, retrieved_docs)
+        else:
+            top_docs = sorted(retrieved_docs, key=lambda x: x.get("score") if x.get("score") is not None else -1,reverse=True)[:5]  # fallback
 
         # 6. Context Optimization
         context, sources = self.context_builder.build(top_docs)
