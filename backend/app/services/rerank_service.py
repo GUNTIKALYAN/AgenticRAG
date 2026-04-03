@@ -7,7 +7,8 @@ class RerankService:
     def __init__(self):
         print("Loading reranker model...")
         try:
-            self.model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+            # self.model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+            self.model = None
         except Exception as e:
             print(f"Reranker failed: {e}")
             self.model = None
