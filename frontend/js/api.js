@@ -27,7 +27,7 @@ const Api = (() => {
     }
     const data = await res.json();
 
-    // 🔥 Normalize response for frontend
+    // Normalize response for frontend
     return {
         filenames: data.details?.map(f => f.file) || [],
         message: 'Upload successful'
@@ -63,29 +63,5 @@ const Api = (() => {
 
     return res.json();
   }
-
-  /**
-   * Fetch list of previously uploaded documents.
-  //  * returns {Promise<{ files: string[] }>}
-   */
-//   async function listFiles() {
-//     const res = await fetch(`${API_BASE}/files`);
-//     if (!res.ok) throw new Error('Could not fetch file list');
-//     return res.json();
-//   }
-
-//   /**
-//    * Delete a document by filename.
-//    * @param {string} filename
-//    */
-//   async function deleteFile(filename) {
-//     const res = await fetch(`${API_BASE}/files/${encodeURIComponent(filename)}`, {
-//       method: 'DELETE',
-//     });
-//     if (!res.ok) throw new Error('Could not delete file');
-//     return res.json();
-//   }
-
-//   return { uploadFiles, sendQuery, listFiles, deleteFile };
   return { uploadFiles, sendQuery, resetSession };
 })();

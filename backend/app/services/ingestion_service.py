@@ -30,7 +30,7 @@ class IngestionService:
 
     def ingest_file(self, file_path: str):
 
-        print(f"📥 Ingesting: {file_path}")
+        print(f"Ingesting: {file_path}")
 
         # 1. Load file
         text = load_file(file_path)
@@ -41,12 +41,12 @@ class IngestionService:
         # 2. Chunking
         chunks = self.splitter.split_text(text)
 
-        print(f"✂️ Chunks created: {len(chunks)}")
+        print(f"Chunks created: {len(chunks)}")
 
         # 3. Embedding
         embeddings = self.embedder.embed_texts(chunks)
 
-        # 4. Prepare metadata (IMPORTANT: align with FAISS index)
+        # 4. Prepare metadata 
         metadata_batch = []
 
         for i, chunk in enumerate(chunks):

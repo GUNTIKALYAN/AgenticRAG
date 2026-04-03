@@ -20,14 +20,14 @@ class RetrievalService:
 
         self.metadata_store = MetadataStore(settings.METADATA_PATH)
 
-        # 🔥 Hybrid search
+        # Hybrid search
         self.hybrid = HybridSearchService(self.metadata_store)
 
         self.similarity_threshold = 0.25
 
     def retrieve(self, query: str, k: int = 10, allowed_sources=None):
 
-        # ========== 1. Semantic Search ==========
+        #  1. Semantic Search 
         query_vector = self.embedder.embed_query(query)
 
         faiss_scores, faiss_indices = self.vector_store.search(query_vector, k)
@@ -54,18 +54,18 @@ class RetrievalService:
 
             semantic_results[int(idx)] = float(score)
 
-        # ========== 2. Keyword Search ==========
+        #  2. Keyword Search 
         keyword_results = self.hybrid.keyword_search(query, k)
 
         keyword_scores = {
             item["index"]: item["score"] for item in keyword_results
         }
 
-        # ========== 3. Merge ==========
+        #  3. Merge 
         combined = {}
 
         for idx, score in semantic_results.items():
-            combined[idx] = score * 0.7  # semantic weight
+            combined[idx] = score * 0.7  
 
         for idx, score in keyword_scores.items():
             if idx in combined:
@@ -73,14 +73,14 @@ class RetrievalService:
             else:
                 combined[idx] = score * 0.3
 
-        # ========== 4. Sort ==========
+        #  4. Sort 
         sorted_indices = sorted(
             combined.keys(),
             key=lambda x: combined[x],
             reverse=True
         )[:k]
 
-        # ========== 5. Build Results ==========
+        #  5. Build Results 
         results = []
 
         for idx in sorted_indices:
@@ -92,7 +92,7 @@ class RetrievalService:
                     "metadata": metadata
                 })
 
-        # ========== 6. Fallback ==========
+        #  6. Fallback 
         if not results:
             print("⚠️ Hybrid fallback triggered")
 

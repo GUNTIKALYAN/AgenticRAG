@@ -17,7 +17,7 @@ state = AppState()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("🚀 Starting up Agentic RAG system...")
+    print("Starting up Agentic RAG system...")
 
     # Load embedding model
     state.embedding_model = load_embedding_model()
@@ -28,11 +28,11 @@ async def lifespan(app: FastAPI):
     # Reranker (safe load)
     state.reranker = RerankService()
 
-    print(f"✅ Cache initialized: {state.cache is not None}")
-    print(f"✅ Reranker loaded: {state.reranker is not None}")
+    print(f"Cache initialized: {state.cache is not None}")
+    print(f"Reranker loaded: {state.reranker is not None}")
 
-    print("🔥 Startup Complete")
+    print("Startup Complete")
 
     yield
 
-    print("🛑 Shutting down system...")
+    print("Shutting down system...")

@@ -33,25 +33,7 @@ const UI = (() => {
     }
   }
 
-  // function renderHistory(activeId = null) {
-  //   const container = document.getElementById('history-list');
-  //   if (!container) return;
-  //   const history = getHistory();
-  //   if (!history.length) {
-  //     container.innerHTML = '<div class="history-empty">No conversations yet</div>';
-  //     return;
-  //   }
-  //   container.innerHTML = history.map(item => `
-  //     <div class="history-item ${item.id === activeId ? 'active' : ''}" data-id="${item.id}" onclick="UI.loadConversation('${item.id}')">
-  //       <svg class="history-item-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-  //         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-  //       </svg>
-  //       <span class="history-item-text">${escapeHtml(item.title)}</span>
-  //       <span class="history-item-time">${relativeTime(item.ts)}</span>
-  //     </div>
-  //   `).join('');
-  // }
-
+ 
   function renderHistory(activeId = null) {
     const list = document.getElementById('history-list');
     list.innerHTML = '';
@@ -81,13 +63,13 @@ const UI = (() => {
         </div>
       `;
 
-      // 👉 open chat
+      // open chat
       item.onclick = (e) => {
         if (e.target.classList.contains('delete-btn')) return;
         window.location.href = 'chat.html?cid=' + id;
       };
 
-      // 👉 delete chat
+      // delete chat
       item.querySelector('.delete-btn').onclick = (e) => {
         e.stopPropagation();
 

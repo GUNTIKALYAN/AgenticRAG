@@ -49,7 +49,7 @@ FINAL ANSWER:
             "messages": [
                 {"role": "user", "content": prompt}
             ],
-            "temperature": 0.1,   # 🔥 lower = more accurate
+            "temperature": 0.1,   
             "max_tokens": 400
         }
 

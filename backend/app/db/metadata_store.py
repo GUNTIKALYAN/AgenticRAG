@@ -4,22 +4,9 @@ import os
 
 class MetadataStore:
 
-    # def __init__(self, path):
-    #     self.path = path
-
-    #     os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    #     if os.path.exists(path):
-    #         with open(path, "r", encoding="utf-8") as f:
-    #             try:
-    #                 self.data = json.load(f)
-    #             except:
-    #                 self.data = []
-    #     else:
-    #         self.data = []
     def __init__(self, path):
         self.path = path
-        self.data = []  # 🔥 always fresh
+        self.data = []  
 
         if os.path.exists(path):
             try:

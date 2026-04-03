@@ -22,9 +22,9 @@
     // Home page send logic is inline in index.html for simplicity
   });
 
-  /* ============================================================
+  /* 
      CHAT PAGE
-  ============================================================ */
+   */
 
   let conversationId = null;
   let conversationMessages = []; // { role, content }

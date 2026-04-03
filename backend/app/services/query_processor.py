@@ -33,6 +33,6 @@ class QueryProcessor:
             return "chat"
 
         if len(q.split()) <= 2:
-            return "chat"  # short queries usually conversational
+            return "chat"  
 
         return "rag"

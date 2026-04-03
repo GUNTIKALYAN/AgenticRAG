@@ -11,23 +11,13 @@ class FAISSStore:
 
         self.index = self._load_or_create()
 
-    # def _load_or_create(self):
-
-    #     os.makedirs(os.path.dirname(self.index_path), exist_ok=True)
-
-    #     if os.path.exists(self.index_path):
-    #         print("✅ Loading existing FAISS index")
-    #         return faiss.read_index(self.index_path)
-
-    #     print("🆕 Creating new FAISS index")
-    #     return faiss.IndexFlatIP(self.dim)  # cosine similarity
     def _load_or_create(self):
 
         if os.path.exists(self.index_path):
-            print("🔹 Loading existing FAISS index...")
+            print("Loading existing FAISS index...")
             return faiss.read_index(self.index_path)
 
-        print("🔹 Creating new FAISS index...")
+        print("Creating new FAISS index...")
         return faiss.IndexFlatIP(self.dim)
 
     def _normalize(self, vectors):
@@ -38,7 +28,7 @@ class FAISSStore:
         vectors = self._normalize(vectors)
 
         self.index.add(vectors)
-        print(f"📦 Total vectors: {self.index.ntotal}")
+        print(f"Total vectors: {self.index.ntotal}")
 
     def search(self, query_vector, k=5):
         query_vector = np.array([query_vector]).astype("float32")

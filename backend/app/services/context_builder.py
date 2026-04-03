@@ -1,9 +1,6 @@
 class ContextBuilder:
 
     def build(self, docs, max_chars=3000):
-        """
-        Build optimized context (not too long, not noisy)
-        """
 
         context_parts = []
         sources = []
