@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAG Assistant</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="logo-text">RAG AI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="/" class="nav-item active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Home
+        </a>
+        <a href="/chat" class="nav-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          New Chat
+        </a>
+      </nav>
+
+      <div class="sidebar-section-label">History</div>
+      <div class="history-list" id="history-list">
+        <!-- populated by JS -->
+        <div class="history-empty">No conversations yet</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">S</div>
+        <div class="user-info">
+          <span class="user-name">User</span>
+          <span class="user-sub">RAG Assistant</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <div class="home-hero">
+        <div class="hero-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h1 class="hero-title">How can I assist you?</h1>
+        <p class="hero-sub">Upload your PDFs or text files and ask anything — get precise, document-grounded answers.</p>
+
+        <div class="input-card" id="main-input-card">
+          <textarea
+            class="main-textarea"
+            id="home-input"
+            placeholder="What's on your mind?"
+            rows="1"
+          ></textarea>
+          <div class="input-actions">
+            <div class="input-left-actions">
+              <label class="action-btn" title="Upload file" for="file-upload-home">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <input type="file" id="file-upload-home" accept=".pdf,.txt" multiple hidden />
+              </label>
+            </div>
+            <button class="send-btn" id="home-send-btn" onclick="handleHomeSubmit()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <p class="input-disclaimer">AI may generate inaccurate information, verify critical outputs</p>
+        </div>
+
+        <div class="upload-status" id="upload-status"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/ui.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script>
+    function handleHomeSubmit() {
+      const val = document.getElementById('home-input').value.trim();
+      if (val) {
+        sessionStorage.setItem('pendingQuery', val);
+        window.location.href = '/chat';
+      }
+    }
+    document.getElementById('home-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleHomeSubmit();
+      }
+    });
+    // Auto-resize textarea
+    document.getElementById('home-input').addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 160) + 'px';
+    });
+    // File upload indicator
+    document.getElementById('file-upload-home').addEventListener('change', function() {
+      const status = document.getElementById('upload-status');
+      const names = Array.from(this.files).map(f => f.name).join(', ');
+      if (names) status.textContent = '📎 ' + names;
+    });
+  </script>
+</body>
+</html>

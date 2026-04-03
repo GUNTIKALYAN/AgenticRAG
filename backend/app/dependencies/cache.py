@@ -1,0 +1,16 @@
+class SimpleCache:
+    def __init__(self):
+        self.store = {}
+
+    def get(self, key):
+        return self.store.get(key)
+
+    def set(self, key, value):
+        self.store[key] = value
+
+    def clear(self):
+        self.store.clear()
+
+def init_cache():
+    print("Initializing cache...")
+    return SimpleCache()
