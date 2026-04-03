@@ -12,7 +12,7 @@ app.include_router(query.router, prefix="/api")
 app.include_router(ingest.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+BASE_DIR = "/app"
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 print("FRONTEND_DIR:", FRONTEND_DIR)

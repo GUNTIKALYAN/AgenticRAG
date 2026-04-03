@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
     print("Starting up Agentic RAG system...")
 
     # Load embedding model
-    state.embedding_model = load_embedding_model()
+    state.embedding_model = None
 
     # Cache
     state.cache = init_cache()
