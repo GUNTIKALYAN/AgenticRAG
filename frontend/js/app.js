@@ -3,6 +3,7 @@
  * Orchestrates chat, file uploads, history, and UI.
  * Depends on: ui.js, api.js (chat page), ui.js (home page)
  */
+let isUploading = false;
 
 (function () {
   'use strict';
@@ -35,12 +36,12 @@
 
     // Restore prior conversation from sessionStorage if exists
     const storedConvo = sessionStorage.getItem('convo_' + conversationId);
-    try {
-      await Api.resetSession();
-      console.log("Session reset");
-    } catch (err) {
-      console.error("Reset failed", err);
-    }
+    // try {
+    //   // await Api.resetSession();
+    //   console.log("Session reset");
+    // } catch (err) {
+    //   console.error("Reset failed", err);
+    // }
     if (storedConvo) {
       try {
         const { title, messages, files } = JSON.parse(storedConvo);
@@ -93,7 +94,7 @@
   /* ---- File Upload ---- */
   async function handleFileUpload(files) {
     if (!files || !files.length) return;
-
+    isUploading = true;
     UI.showToast(`Uploading ${files.length} file(s)…`, 'info', 2500);
 
     try {
@@ -105,11 +106,17 @@
       saveConversation();
     } catch (err) {
       UI.showToast('Upload failed: ' + err.message, 'error');
+    } finally{
+      isUploading = false;
     }
   }
 
   /* ---- Submit Query ---- */
   async function submitQuery() {
+    if (isUploading) {
+      UI.showToast("⏳ Please wait, file is still processing...", "info");
+      return;
+    }
     const input = document.getElementById('chat-input');
     const query = input.value.trim();
     if (!query) return;
@@ -131,6 +138,10 @@
 
     // Disable input
     const sendBtn = document.getElementById('send-btn');
+    if (isUploading) {
+      UI.showToast("Wait for upload to finish", "info");
+      return;
+    }
     sendBtn.disabled = true;
 
     // Show typing

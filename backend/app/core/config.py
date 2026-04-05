@@ -22,8 +22,10 @@ class Settings:
     METADATA_DIR = os.path.join(DATA_DIR, "metadata")
     METADATA_PATH = os.path.join(METADATA_DIR, "metadata.json")
 
-    EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-
+    # EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+    EMBEDDING_MODEL = "text-embedding-3-small"   # OpenAI model via OpenRouter
+    EMBEDDING_DIM = 1536   
     LLM_API_KEY = os.getenv("GROQ_API_KEY", "")
 
 

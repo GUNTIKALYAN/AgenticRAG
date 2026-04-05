@@ -6,3 +6,8 @@ python-dotenv
 rank-bm25
 PyPDF2
 langchain-text-splitters
+tqdm
+faiss-cpu==1.13.2
+python-multipart
+openai
+groq

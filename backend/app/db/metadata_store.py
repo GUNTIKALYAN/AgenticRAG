@@ -24,5 +24,7 @@ class MetadataStore:
         return None
 
     def save(self):
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)  # ✅ ADD THIS
+
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.data, f, indent=2)

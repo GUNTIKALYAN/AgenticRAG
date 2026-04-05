@@ -16,7 +16,7 @@ class IngestionService:
         self.embedder = EmbeddingService()
 
         self.vector_store = FAISSStore(
-            dim=384,
+            dim=settings.EMBEDDING_DIM,
             index_path=settings.FAISS_INDEX_PATH
         )
 
@@ -45,6 +45,7 @@ class IngestionService:
 
         # 3. Embedding
         embeddings = self.embedder.embed_texts(chunks)
+        print(f"Embeddings generated: {len(embeddings)}")
 
         # 4. Prepare metadata 
         metadata_batch = []
@@ -55,6 +56,7 @@ class IngestionService:
                 "text": chunk,
                 "chunk_id": i
             })
+        print(f"Metadata size now: {len(self.metadata_store.data)}")
 
         # 5. Add to FAISS
         self.vector_store.add(embeddings)
@@ -63,8 +65,14 @@ class IngestionService:
         self.vector_store.save()
 
         # 7. Add metadata (APPEND ONLY)
+        print("Before adding metadata:", len(self.metadata_store.data))
         self.metadata_store.add_batch(metadata_batch)
+        print("After adding metadata:", len(self.metadata_store.data))
         self.metadata_store.save()
+
+        from app.db.metadata_store import MetadataStore
+        temp_store = MetadataStore(settings.METADATA_PATH)
+        print("Reloaded metadata size:", len(temp_store.data))
 
         # 8. Save chunks.json (for debugging only)
         self._save_chunks(chunks)

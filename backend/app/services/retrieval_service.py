@@ -14,7 +14,7 @@ class RetrievalService:
         self.embedder = EmbeddingService()
 
         self.vector_store = FAISSStore(
-            dim=384,
+            dim=settings.EMBEDDING_DIM,
             index_path=settings.FAISS_INDEX_PATH
         )
 
@@ -26,7 +26,8 @@ class RetrievalService:
         self.similarity_threshold = 0.25
 
     def retrieve(self, query: str, k: int = 10, allowed_sources=None):
-
+        
+        self._refresh_state()
         #  1. Semantic Search 
         query_vector = self.embedder.embed_query(query)
 
@@ -106,3 +107,16 @@ class RetrievalService:
                     })
 
         return results
+    
+    def _refresh_state(self):
+        from app.db.metadata_store import MetadataStore
+        from app.services.hybrid_search_service import HybridSearchService
+        from app.core.config import settings
+
+        # reload metadata from disk
+        self.metadata_store = MetadataStore(settings.METADATA_PATH)
+        if len(self.metadata_store.data) == 0:
+            print("Metadat still empty at query time")
+
+        # rebuild BM25
+        self.hybrid = HybridSearchService(self.metadata_store)

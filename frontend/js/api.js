@@ -29,11 +29,11 @@ const Api = (() => {
 
     // Normalize response for frontend
     return {
-        filenames: data.details?.map(f => f.file) || [],
-        message: 'Upload successful'
+        filenames: data.files || data.filenames || [],
+        message: data.status || 'Upload successful'
     };
   }
-
+  
   /**
    * Send a chat query to the RAG backend.
    * @param {string} query
