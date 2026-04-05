@@ -44,6 +44,7 @@ from app.dependencies.cache import init_cache
 from app.services.rerank_service import RerankService
 from app.dependencies.model_loader import get_embedding_config
 from app.db.faiss_store import FAISSStore
+from app.core.config import settings
 
 class AppState:
     cache = None
@@ -67,8 +68,10 @@ async def lifespan(app: FastAPI):
     # Reranker
     state.reranker = RerankService()
 
-    state.faiss = FAISSStore()
-
+    state.faiss = FAISSStore(
+        dim=1536,
+        index_path=settings.FAISS_INDEX_PATH
+    )
 
     print(f"Cache initialized: {state.cache is not None}")
     print(f"Reranker loaded: {state.reranker is not None}")
