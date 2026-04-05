@@ -42,7 +42,8 @@ from fastapi import FastAPI
 
 from app.dependencies.cache import init_cache
 from app.services.rerank_service import RerankService
-
+from app.dependencies.model_loader import get_embedding_config
+from app.db.faiss_store import FAISSStore
 
 class AppState:
     cache = None
@@ -57,12 +58,17 @@ async def lifespan(app: FastAPI):
     print("Starting up Agentic RAG system...")
 
     # ❌ REMOVE embedding model loading
+    state.embedding_model = get_embedding_config()
+
 
     # Cache
     state.cache = init_cache()
 
     # Reranker
     state.reranker = RerankService()
+
+    state.faiss = FAISSStore()
+
 
     print(f"Cache initialized: {state.cache is not None}")
     print(f"Reranker loaded: {state.reranker is not None}")
