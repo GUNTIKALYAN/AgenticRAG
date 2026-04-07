@@ -20,7 +20,7 @@ RULES:
     - Be short and direct (1 line answer)
 EXAMPLES:
     Candidate Name → GUNTI KALYAN
-    Registration Number → 5413668967
+    Registration Number → the regrestration number is 5413668967
 
 RESPONSE STYLE:
 - Give a clear explanation (2–4 sentences)
