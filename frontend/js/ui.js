@@ -191,6 +191,27 @@ const UI = (() => {
   function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
+  async function handleNewChat() {
+  try {
+    // 🔥 Reset backend (FAISS + metadata)
+    await Api.newChat();
+
+    // 🔥 Clear frontend memory
+    sessionStorage.clear();
+
+    // 🔥 Clear UI
+    const area = document.getElementById('messages-inner');
+    if (area) area.innerHTML = '';
+
+    const badge = document.getElementById('file-badge-area');
+    if (badge) badge.innerHTML = '';
+
+    showToast("New chat started", "success");
+
+  } catch (err) {
+    showToast("Failed to reset chat", "error");
+  }
+}
 
   return {
     showToast,
@@ -205,5 +226,6 @@ const UI = (() => {
     renderFileBadges,
     generateId,
     escapeHtml,
+    handleNewChat
   };
 })();

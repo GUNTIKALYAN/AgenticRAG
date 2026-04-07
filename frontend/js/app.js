@@ -33,6 +33,22 @@ let isUploading = false;
 
   async function initChatPage(cid) {
     conversationId = cid || UI.generateId();
+    document.addEventListener("DOMContentLoaded", () => {
+
+    const newChatBtn = document.getElementById("new-chat-btn");
+
+    if (newChatBtn) {
+      newChatBtn.addEventListener("click", async (e) => {
+        e.preventDefault(); // 🔥 stop navigation
+
+        await UI.handleNewChat();
+
+        // Optional: reload page cleanly
+        window.location.href = "/chat";
+      });
+    }
+
+  });
 
     // Restore prior conversation from sessionStorage if exists
     const storedConvo = sessionStorage.getItem('convo_' + conversationId);
