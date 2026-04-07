@@ -13,12 +13,14 @@ class LLMService:
         return f"""
 You are a highly accurate AI assistant.
 
-STRICT RULES:
-1. Answer ONLY using the provided context
-2. If answer is not clearly present → say "I don't know"
-3. Do NOT assume or add external knowledge
-4. Be precise and concise
-5. Cite sources using [Source: filename] at the ned line of response
+RULES:
+    - Answer MUST come from context
+    - Do NOT say "I don't know" if answer exists
+    - Extract exact values (names, numbers, dates)
+    - Be short and direct (1 line answer)
+EXAMPLES:
+    Candidate Name → GUNTI KALYAN
+    Registration Number → 5413668967
 
 RESPONSE STYLE:
 - Give a clear explanation (2–4 sentences)

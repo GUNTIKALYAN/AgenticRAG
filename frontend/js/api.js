@@ -26,6 +26,9 @@ const Api = (() => {
       throw new Error(err.detail || `Upload failed (${res.status})`);
     }
     const data = await res.json();
+    if (data.status === "error") {
+      throw new Error(data.message);
+    }
 
     // Normalize response for frontend
     return {

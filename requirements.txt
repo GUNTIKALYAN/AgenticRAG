@@ -11,3 +11,6 @@ faiss-cpu==1.13.2
 python-multipart
 openai
 groq
+pdfplumber 
+pillow
+pdfplumber

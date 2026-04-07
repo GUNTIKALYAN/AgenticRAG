@@ -1,12 +1,12 @@
 import os
 import json
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from app.utils.helpers import load_file
 from app.services.embedding_service import EmbeddingService
-from app.db.faiss_store import FAISSStore
-from app.db.metadata_store import MetadataStore
 from app.core.config import settings
+from app.core.startup import state
 
 
 class IngestionService:
@@ -15,18 +15,26 @@ class IngestionService:
 
         self.embedder = EmbeddingService()
 
-        self.vector_store = FAISSStore(
-            dim=settings.EMBEDDING_DIM,
-            index_path=settings.FAISS_INDEX_PATH
-        )
-
-        self.metadata_store = MetadataStore(settings.METADATA_PATH)
+        self.vector_store = state.faiss
+        self.metadata_store = state.metadata
 
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size=600,
             chunk_overlap=100
         )
 
+    def is_text_valid(text: str) -> bool:
+        if not text:
+            return False
+
+        # remove spaces/newlines
+        clean = text.strip()
+
+        # very weak text - likely scanned PDF
+        if len(clean) < 50:
+            return False
+
+        return True
 
     def ingest_file(self, file_path: str):
 
@@ -35,19 +43,22 @@ class IngestionService:
         # 1. Load file
         text = load_file(file_path)
 
-        if not text or len(text.strip()) == 0:
-            raise Exception("Empty file content")
-
+        if not text or len(text.strip()) < 20:
+            print(f"Skipping (no usable text): {file_path}")
+            return {
+                "chunks_added": 0,
+                "total_vectors": self.vector_store.index.ntotal
+            }
+        
         # 2. Chunking
         chunks = self.splitter.split_text(text)
-
         print(f"Chunks created: {len(chunks)}")
 
-        # 3. Embedding
+        # 3. Embeddings
         embeddings = self.embedder.embed_texts(chunks)
         print(f"Embeddings generated: {len(embeddings)}")
 
-        # 4. Prepare metadata 
+        # 4. Prepare metadata
         metadata_batch = []
 
         for i, chunk in enumerate(chunks):
@@ -56,25 +67,28 @@ class IngestionService:
                 "text": chunk,
                 "chunk_id": i
             })
-        print(f"Metadata size now: {len(self.metadata_store.data)}")
 
         # 5. Add to FAISS
         self.vector_store.add(embeddings)
 
-        # 6. Save FAISS
-        self.vector_store.save()
+        # 6. Add metadata (append)
+        print(f"Metadata before: {len(self.metadata_store.data)}")
 
-        # 7. Add metadata (APPEND ONLY)
-        print("Before adding metadata:", len(self.metadata_store.data))
         self.metadata_store.add_batch(metadata_batch)
-        print("After adding metadata:", len(self.metadata_store.data))
         self.metadata_store.save()
 
-        from app.db.metadata_store import MetadataStore
-        temp_store = MetadataStore(settings.METADATA_PATH)
-        print("Reloaded metadata size:", len(temp_store.data))
+        print(f"Metadata after: {len(self.metadata_store.data)}")
 
-        # 8. Save chunks.json (for debugging only)
+        # Refresh global state
+        from app.db.metadata_store import MetadataStore
+        from app.services.hybrid_search_service import HybridSearchService
+
+        state.metadata = MetadataStore(settings.METADATA_PATH)
+        state.hybrid = HybridSearchService(state.metadata)
+
+        print(f"Global metadata updated: {len(state.metadata.data)}")
+
+        # 7. Save chunks 
         self._save_chunks(chunks)
 
         return {
@@ -87,11 +101,11 @@ class IngestionService:
         os.makedirs(os.path.dirname(settings.CHUNKS_PATH), exist_ok=True)
 
         if os.path.exists(settings.CHUNKS_PATH):
-            with open(settings.CHUNKS_PATH, "r", encoding="utf-8") as f:
-                try:
+            try:
+                with open(settings.CHUNKS_PATH, "r", encoding="utf-8") as f:
                     existing = json.load(f)
-                except:
-                    existing = []
+            except:
+                existing = []
         else:
             existing = []
 

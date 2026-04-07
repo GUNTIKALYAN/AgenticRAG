@@ -5,11 +5,16 @@ from app.dependencies.cache import init_cache
 from app.services.rerank_service import RerankService
 from app.dependencies.model_loader import get_embedding_config
 from app.db.faiss_store import FAISSStore
+from app.db.metadata_store import MetadataStore
+from app.services.hybrid_search_service import HybridSearchService
 from app.core.config import settings
 
 class AppState:
     cache = None
     reranker = None
+    faiss = None
+    metadata = None
+    hybrid = None
 
 
 state = AppState()
@@ -29,12 +34,15 @@ async def lifespan(app: FastAPI):
     state.reranker = RerankService()
 
     state.faiss = FAISSStore(
-        dim=1536,
+        dim=settings.EMBEDDING_DIM,
         index_path=settings.FAISS_INDEX_PATH
     )
 
-    print(f"Cache initialized: {state.cache is not None}")
-    print(f"Reranker loaded: {state.reranker is not None}")
+    state.metadata = MetadataStore(settings.METADATA_PATH)
+    print(f"Metadata loaded at startup: {len(state.metadata.data)}")
+
+    # HYBRID BM25
+    state.hybrid = HybridSearchService(state.metadata)
 
     print("Startup Complete")
 

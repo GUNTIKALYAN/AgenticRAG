@@ -71,5 +71,4 @@ class FAISSStore:
         return scores[0], indices[0]
 
     def save(self):
-        os.makedirs(os.path.dirname(self.index_path), exist_ok=True)
         faiss.write_index(self.index, self.index_path)
